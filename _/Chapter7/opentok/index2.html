@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src='http://static.opentok.com/webrtc/v2.2/js/opentok.min.js'></script>
+    <script type="text/javascript">
+        var apiKey = <YOUR_API_ADI>;
+        var sessionId = <GENERATED_SESSION_ID>;
+        var token = <TOKEN_2>;
+
+        var session = OT.initSession(apiKey, sessionId);
+
+        session.on("streamCreated", function(event) {
+            session.subscribe(event.stream);
+        });
+
+        session.connect(token, function(error) {
+            var publisher = OT.initPublisher();
+            session.publish(publisher);
+        });
+    </script>
+</head>
+<body>
+    <h1>Awesome video feed!</h1>
+    <div id="myPublisherDiv"></div>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{application, sigserver,
+ [
+  {description, ""},
+  {vsn, "1"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib,
+cowlib, cowboy, compiler, gproc
+                 ]},
+  {mod, { sigserver_app, []}},
+  {env, []}
+ ]}.

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <script src="http://cdn.peerjs.com/0.3/peer.js"></script>
+</head>
+<body>
+<br><input type="text" id="inputbox"/>
+<button id="btn_connect" onclick="Connect()">Connect!</button>
+<button id="btn_call" onclick="CallTo()" disabled="true">Call To</button>
+<button id="btn_send" onclick="SendMessage()">Send message</button>
+
+<script language="JavaScript">
+    // !!! ATTENTION !!!
+    // put there your API ID you've received after registered in PeerJS system
+    var MY_API_ID = 'YOUR_API_ID';
+    var peer = null;
+    var conn = null;
+
+    function Connect() {
+        var myname = document.getElementById("inputbox").value;
+        peer = new Peer(myname, {key: MY_API_ID});
+
+        peer.on('connection', function(connection) {
+            cconnection.on('data', function(data){
+                console.log("Remote peer said: " + data);
+            });
+            conn = cconnection;
+        });
+
+        document.getElementById("btn_connect").setAttribute("disabled","true");
+        document.getElementById("btn_call").removeAttribute("disabled");
+    };
+
+    function CallTo() {
+        var remotename = document.getElementById("inputbox").value;
+        conn = peer.connect(remotename);
+
+        document.getElementById("btn_call").setAttribute("disabled","true");
+    };
+
+    function SendMessage() {
+        var msg = document.getElementById("inputbox").value;
+        conn.send(msg);
+    };
+</script>
+</body>
+</html>

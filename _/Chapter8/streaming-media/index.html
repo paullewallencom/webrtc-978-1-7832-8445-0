@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My WebRTC file media streaming demo</title>
+<style type="text/css">
+    video {
+        width: 384px;
+        height: 288px;
+        border: 1px solid black;
+        text-align: center;
+    }
+</style>
+    <script type="text/javascript" src="myrtclib.js"></script>
+    <script src="https://rawgit.com/GoogleChrome/webrtc/master/samples/web/js/adapter.js"></script>
+</head>
+<body>
+<div id="status"></div><br>
+<div><video id="remotevideo" autoplay="true" controls="true"></video></div>
+<div>
+    file you want to stream <input type="file" id="files" name="files[]"/> then press <button onclick="onSendBtnClick()">Start streaming !</button>
+</div>
+<script>
+    var filelist;
+
+    if (window.File && window.FileReader && window.FileList && window.Blob) {
+        document.getElementById('files').addEventListener('change', handleFileSelect, false);
+        myrtclibinit("ws://127.0.0.1:30001", document.getElementById("remotevideo"));
+    } else {
+        alert('The File APIs are not fully supported in this browser.');
+    }
+
+    function handleFileSelect(evt) {
+        filelist = evt.target.files;
+    };
+
+    function onSendBtnClick() {
+        doStreamMedia(filelist[0]);
+    };
+
+    function onRoomReceived(room) {
+        var st = document.getElementById("status");
+        st.innerHTML = "Now, if somebody wants to join you, should use this link: <a href=\""+window.location.href+"?room="+room+"\">"+window.location.href+"?room="+room+"</a>";
+    };
+
+</script>
+
+</body>
+</html>

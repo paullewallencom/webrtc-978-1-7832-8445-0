@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="https://rawgit.com/GoogleChrome/webrtc/master/samples/web/js/adapter.js"></script>
+</head>
+<body>
+
+<div><video width="384" id="lVideo" muted="true" autoplay="true"></video></div>
+<canvas width="384" height="20" id="micecanvas" style="background-color: white;"></canvas>
+
+<script type="text/javascript">
+    function init() {
+        var constraints = {"audio": true, "video": {"mandatory": {}, "optional": []}};
+
+        getUserMedia(constraints, onUserMediaSuccess, onUserMediaError);
+    }
+
+    function onUserMediaError(error) {
+        console.log("Error: " + error);
+    }
+
+    function onUserMediaSuccess(stream) {
+            var localVideo = document.getElementById("lVideo");
+            attachMediaStream(localVideo, stream);
+
+            window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext;
+
+            var audioContext = new AudioContext();
+            var analyser = audioContext.createAnalyser();
+            var microphone = audioContext.createMediaStreamSource(stream);
+            var javascriptNode = audioContext.createScriptProcessor(2048, 1, 1);
+
+            analyser.smoothingTimeConstant = 0.3;
+            analyser.fftSize = 1024;
+
+            microphone.connect(analyser);
+            analyser.connect(javascriptNode);
+            javascriptNode.connect(audioContext.destination);
+
+            var canvasContext = document.getElementById("micecanvas").getContext("2d");
+
+            javascriptNode.onaudioprocess = function() {
+                var array =  new Uint8Array(analyser.frequencyBinCount);
+                analyser.getByteFrequencyData(array);
+                var values = 0;
+
+                var length = array.length;
+                for (var i = 0; i < length; i++) {
+                    values += array[i];
+                }
+
+                var average = values / length;
+                canvasContext.clearRect(0, 0, 384, 20);
+                canvasContext.fillStyle = 'red';
+                canvasContext.fillRect(0, 0, average, 20);
+            }
+    }
+
+    init();
+</script>
+
+</body>
+</html>
